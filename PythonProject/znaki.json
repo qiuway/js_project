@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "nazwa": "Znak STOP",
+    "pytanie": "Co oznacza ten znak??",
+    "plik_obrazka": "stop.png",
+    "poprawna": "Znak STOP"
+  },
+  {
+    "id": 2,
+    "nazwa": "Ograniczenie prędkości 50",
+    "pytanie": "Jaka jest maksymalna dozwolona prędkość na tym znaku?",
+    "plik_obrazka": "ograniczenie50.png",
+    "poprawna": "Ograniczenie prędkości 50"
+  },
+  {
+    "id": 3,
+    "nazwa": "Zakaz wjazdu",
+    "pytanie": "Co oznacza ten znak?",
+    "plik_obrazka": "zakaz_wjazdu.png",
+    "poprawna": "Zakaz wjazdu"
+  },
+  {
+    "id": 4,
+    "nazwa": "Droga z pierwszeństwem",
+    "pytanie": "Co oznacza ten znak?",
+    "plik_obrazka": "droga_z_pierwszenstwem.png",
+    "poprawna": "Droga z pierwszeństwem"
+  },
+  {
+    "id": 5,
+    "nazwa": "Przejście dla pieszych",
+    "pytanie": "Co oznacza ten znak?",
+    "plik_obrazka": "przejscie_dla_pieszych.png",
+    "poprawna": "Przejście dla pieszych"
+  },
+  {
+    "id": 6,
+    "nazwa": "Zakaz skrętu w lewo",
+    "pytanie": "Co oznacza ten znak?",
+    "plik_obrazka": "zakaz_skretu_w_lewo.png",
+    "poprawna": "Zakaz skrętu w lewo"
+  },
+  {
+    "id": 7,
+    "nazwa": "Parking",
+    "pytanie": "Co oznacza ten znak?",
+    "plik_obrazka": "parking.png",
+    "poprawna": "Parking"
+  },
+  {
+    "id": 8,
+    "nazwa": "Ustąp pierwszeństwa",
+    "pytanie": "Co oznacza ten znak?",
+    "plik_obrazka": "ustap_pierwszenstwa.png",
+    "poprawna": "Ustąp pierwszeństwa"
+  },
+  {
+    "id": 9,
+    "nazwa": "Droga jednokierunkowa",
+    "pytanie": "Co oznacza ten znak?",
+    "plik_obrazka": "droga_jednokierunkowa.png",
+    "poprawna": "Droga jednokierunkowa"
+  },
+  {
+    "id": 10,
+    "nazwa": "Zakaz postoju",
+    "pytanie": "Co oznacza ten znak?",
+    "plik_obrazka": "zakaz_postoju.png",
+    "poprawna": "Zakaz postoju"
+  }
+]
