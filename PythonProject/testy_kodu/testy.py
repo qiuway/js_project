@@ -6,8 +6,12 @@ from memory_profiler import memory_usage
 from model import ZnakDrogowy, wczytaj_znaki_z_json
 from wyniki import zapisz_wynik
 import tempfile
+import subprocess
 
-class TestZnakDrogowy(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
+    pass
+
+class TestZnakDrogowy(BaseTestCase):
     def setUp(self):
         self.znak = ZnakDrogowy(
             id=1,
@@ -23,7 +27,7 @@ class TestZnakDrogowy(unittest.TestCase):
     def test_sprawdz_odpowiedz_niepoprawna(self):
         self.assertFalse(self.znak.sprawdz_odpowiedz("Zakaz"))
 
-class TestWczytajZnaki(unittest.TestCase):
+class TestWczytajZnaki(BaseTestCase):
     def test_wczytaj_poprawny_json(self):
         dane = [
             {
@@ -41,7 +45,6 @@ class TestWczytajZnaki(unittest.TestCase):
         znaki = wczytaj_znaki_z_json(tmp_path)
         self.assertEqual(len(znaki), 1)
         self.assertEqual(znaki[0].nazwa, "Stop")
-
         os.remove(tmp_path)
 
     def test_wczytaj_bledny_json(self):
@@ -51,10 +54,9 @@ class TestWczytajZnaki(unittest.TestCase):
 
         znaki = wczytaj_znaki_z_json(tmp_path)
         self.assertEqual(len(znaki), 0)
-
         os.remove(tmp_path)
 
-class TestZapiszWynik(unittest.TestCase):
+class TestZapiszWynik(BaseTestCase):
     def test_zapisz_wynik_do_pliku(self):
         with tempfile.NamedTemporaryFile("r+", delete=False, encoding="utf-8") as tmp:
             tmp_path = tmp.name
@@ -62,15 +64,11 @@ class TestZapiszWynik(unittest.TestCase):
             tmp.seek(0)
             zawartosc = tmp.read()
             self.assertIn("Poprawne odpowiedzi: 3/5", zawartosc)
-
         os.remove(tmp_path)
 
-class TestWydajnosc(unittest.TestCase):
+class TestWydajnosc(BaseTestCase):
     def test_czas_wczytania_znakow(self):
-        dane = [
-            {"id": i, "nazwa": f"Znak{i}", "pytanie": "?", "plik_obrazka": "img.png", "poprawna": f"Znak{i}"}
-            for i in range(1000)
-        ]
+        dane = [{"id": i, "nazwa": f"Znak{i}", "pytanie": "?", "plik_obrazka": "img.png", "poprawna": f"Znak{i}"} for i in range(1000)]
         with tempfile.NamedTemporaryFile("w", delete=False, encoding="utf-8") as tmp:
             json.dump(dane, tmp)
             tmp_path = tmp.name
@@ -81,16 +79,11 @@ class TestWydajnosc(unittest.TestCase):
         czas = timeit.timeit(wczytaj, number=5)
         print(f"Czas wczytania 1000 znaków (5 powtórzeń): {czas:.4f} sek.")
         os.remove(tmp_path)
-
-        # Asercja — test nie przejdzie jeśli czas będzie dłuższy niż 1 sekunda
         self.assertLess(czas, 1.0, "Wczytywanie znaków trwa zbyt długo")
 
-class TestPamiec(unittest.TestCase):
+class TestPamiec(BaseTestCase):
     def test_pamiec_wczytywania(self):
-        dane = [
-            {"id": i, "nazwa": f"Znak{i}", "pytanie": "?", "plik_obrazka": "img.png", "poprawna": f"Znak{i}"}
-            for i in range(1000)
-        ]
+        dane = [{"id": i, "nazwa": f"Znak{i}", "pytanie": "?", "plik_obrazka": "img.png", "poprawna": f"Znak{i}"} for i in range(1000)]
         with tempfile.NamedTemporaryFile("w", delete=False, encoding="utf-8") as tmp:
             json.dump(dane, tmp)
             tmp_path = tmp.name
@@ -101,41 +94,22 @@ class TestPamiec(unittest.TestCase):
         mem_usage = memory_usage(wczytaj, max_usage=True)
         print(f"Maksymalne zużycie pamięci podczas wczytywania: {mem_usage} MiB")
         os.remove(tmp_path)
-
-        # Asercja — test nie przejdzie jeśli pamięć przekroczy 100 MiB
         self.assertLess(mem_usage, 100.0, "Zużycie pamięci jest za wysokie")
 
-class TestFunkcjonalny(unittest.TestCase):
+class TestFunkcjonalny(BaseTestCase):
     def test_pelny_przebieg(self):
-        # Przygotowanie danych wejściowych (JSON)
         dane = [
-            {
-                "id": 1,
-                "nazwa": "Stop",
-                "pytanie": "Co oznacza ten znak?",
-                "plik_obrazka": "stop.png",
-                "poprawna": "Stop"
-            },
-            {
-                "id": 2,
-                "nazwa": "Zakaz",
-                "pytanie": "Co oznacza ten znak?",
-                "plik_obrazka": "zakaz.png",
-                "poprawna": "Zakaz"
-            }
+            {"id": 1, "nazwa": "Stop", "pytanie": "Co oznacza ten znak?", "plik_obrazka": "stop.png", "poprawna": "Stop"},
+            {"id": 2, "nazwa": "Zakaz", "pytanie": "Co oznacza ten znak?", "plik_obrazka": "zakaz.png", "poprawna": "Zakaz"}
         ]
         with tempfile.NamedTemporaryFile("w", delete=False, encoding="utf-8") as tmp_json:
             json.dump(dane, tmp_json)
             tmp_json_path = tmp_json.name
 
-        # Wczytanie znaków (test integracji)
         znaki = wczytaj_znaki_z_json(tmp_json_path)
-
-        # Sprawdzenie odpowiedzi
         poprawne_odp = sum(znak.sprawdz_odpowiedz(znak.poprawna) for znak in znaki)
         self.assertEqual(poprawne_odp, 2)
 
-        # Zapis wyniku
         with tempfile.NamedTemporaryFile("r+", delete=False, encoding="utf-8") as tmp_wynik:
             zapisz_wynik(tmp_wynik.name, poprawne_odp, len(znaki))
             tmp_wynik.seek(0)
@@ -145,6 +119,12 @@ class TestFunkcjonalny(unittest.TestCase):
         os.remove(tmp_json_path)
         os.remove(tmp_wynik.name)
 
+class TestJakoscKodu(BaseTestCase):
+    def test_flake8(self):
+        sciezka = os.path.join(os.path.dirname(__file__), '..', 'model.py')
+        sciezka = os.path.abspath(sciezka)
+        result = subprocess.run(['flake8', sciezka], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, msg=f"Błędy flake8:\n{result.stdout}")
 
 if __name__ == "__main__":
     unittest.main()
